@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cyber Dashboard V3.0</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#030712;color:#00ff99;
+ font-family:monospace;text-align:center;
+ padding:20px;overflow-x:hidden
+}
+canvas{
+ position:fixed;inset:0;width:100%;height:100%;
+ z-index:-1;opacity:.25
+}
+h1{text-shadow:0 0 15px #00ff99}
+.box{
+ max-width:450px;margin:20px auto;padding:22px;
+ border:1px solid #00ff99;border-radius:14px;
+ background:#07111de8;
+ box-shadow:0 0 18px #00ff9933
+}
+.status{color:#00ff99}
+button{
+ background:#00ff99;color:#00150d;
+ border:0;padding:12px;border-radius:6px;
+ font-weight:bold;cursor:pointer
+}
+input{
+ width:100%;padding:12px;background:#101d2b;
+ color:#00ff99;border:1px solid #00ff99;
+ border-radius:6px;margin:8px 0
+}
+.terminal{
+ text-align:left;background:#02050b;
+ padding:14px;border-radius:8px;
+ min-height:100px;overflow-wrap:anywhere
+}
+#output{color:#70baff;white-space:pre-wrap}
+</style>
+</head>
+<body>
+
+<canvas id="matrix"></canvas>
+
+<h1>CYBER DASHBOARD</h1>
+<p>ADVANCED SECURITY LAB V3.0</p>
+<p class="status">● SYSTEM ONLINE</p>
+
+<div class="box">
+<h2>SYSTEM MONITOR</h2>
+<p>STATUS: <span id="status">ACTIVE</span></p>
+<p>SESSION UPTIME: <span id="uptime">0</span> sec</p>
+<p>DEVICE MEMORY: <span id="memory">Checking...</span></p>
+<p>BROWSER: <span id="browser">Checking...</span></p>
+<p>TIME: <span id="clock"></span></p>
+</div>
+
+<div class="box">
+<h2>CYBER TERMINAL</h2>
+<div class="terminal">
+<p>> Welcome to Cyber Lab V3.0</p>
+<p>> Type help to see commands.</p>
+<p id="output">System ready...</p>
+</div>
+<input id="cmd" placeholder="Enter demo command">
+<button onclick="runCommand()">EXECUTE</button>
+</div>
+
+<div class="box">
+<h2>SECURITY STATUS</h2>
+<p>● Local server: ACTIVE</p>
+<p>● Data collection: DISABLED</p>
+<p>● Practice mode: ENABLED</p>
+<p>● Login testing: DISABLED</p>
+</div>
+
+<script>
+const start=Date.now();
+
+function update(){
+ document.getElementById("clock").textContent=
+ new Date().toLocaleTimeString();
+
+ document.getElementById("uptime").textContent=
+ Math.floor((Date.now()-start)/1000);
+}
+setInterval(update,1000);
+update();
+
+document.getElementById("memory").textContent=
+ navigator.deviceMemory
+ ? navigator.deviceMemory+" GB (browser estimate)"
+ : "Not available";
+
+document.getElementById("browser").textContent=
+ navigator.userAgent.includes("Chrome")
+ ? "Chrome"
+ : "Browser active";
+
+function runCommand(){
+ let input=document.getElementById("cmd");
+ let cmd=input.value.trim().toLowerCase();
+ let out=document.getElementById("output");
+
+ const commands={
+  help:"Commands: help, status, time, uptime, about, clear",
+  status:"SYSTEM ONLINE | PRACTICE MODE ACTIVE",
+  time:"Current time: "+new Date().toLocaleTimeString(),
+  uptime:"Session uptime: "+Math.floor((Date.now()-start)/1000)+" seconds",
+  about:"Cyber Dashboard V3.0 - Educational demo"
+ };
+
+ if(cmd==="clear") out.textContent="Terminal cleared.";
+ else out.textContent=commands[cmd]||"Unknown demo command. Type help.";
+
+ input.value="";
+}
+
+// Decorative animated background
+const canvas=document.getElementById("matrix");
+const ctx=canvas.getContext("2d");
+let drops=[];
+
+function resize(){
+ canvas.width=innerWidth;
+ canvas.height=innerHeight;
+ drops=Array(Math.ceil(canvas.width/18)).fill(1);
+}
+resize();
+addEventListener("resize",resize);
+
+function draw(){
+ ctx.fillStyle="rgba(3,7,18,0.12)";
+ ctx.fillRect(0,0,canvas.width,canvas.height);
+ ctx.fillStyle="#00ff99";
+ ctx.font="14px monospace";
+
+ drops.forEach((y,i)=>{
+  ctx.fillText(Math.random()>0.5?"1":"0",i*18,y*18);
+  if(y*18>canvas.height && Math.random()>0.97)
+   drops[i]=0;
+  drops[i]++;
+ });
+}
+setInterval(draw,80);
+</script>
+
+</body>
+</html>
+
